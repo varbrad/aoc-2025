@@ -10,8 +10,5 @@ func DoThing() int {
 }
 
 func main() {
-
-
-	
 	fmt.Println("Hello, World!")
 }
