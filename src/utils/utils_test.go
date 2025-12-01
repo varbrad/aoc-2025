@@ -2,6 +2,8 @@ package utils
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSplitLines(t *testing.T) {
@@ -41,14 +43,7 @@ func TestSplitLines(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			result := SplitLines(tt.input)
-			if len(result) != len(tt.expected) {
-				t.Fatalf("expected length %d, got %d", len(tt.expected), len(result))
-			}
-			for i := range result {
-				if result[i] != tt.expected[i] {
-					t.Errorf("at index %d, expected %q, got %q", i, tt.expected[i], result[i])
-				}
-			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }
@@ -94,20 +89,12 @@ func TestToInt(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			result := ToInt(tt.input)
-			if result != tt.expected {
-				t.Errorf("expected %d, got %d", tt.expected, result)
-			}
+			assert.Equal(t, tt.expected, ToInt(tt.input))
 		})
 	}
 
 	t.Run("Invalid Input", func(t *testing.T) {
 		t.Parallel()
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("expected panic for invalid input, but did not panic")
-			}
-		}()
-		ToInt("invalid")
+		assert.PanicsWithValue(t, "could not convert string to int: \"invalid\"", func() { ToInt("invalid") })
 	})
 }

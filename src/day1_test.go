@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestD1P1(t *testing.T) {
@@ -30,9 +32,7 @@ func TestD1P1(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if got := D1P1(tt.input); got != tt.expect {
-				t.Errorf("D1P1() = %v, expected %v", got, tt.expect)
-			}
+			assert.Equal(t, tt.expect, D1P1(tt.input))
 		})
 	}
 }
@@ -63,9 +63,7 @@ func TestD1P2(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if got := D1P2(tt.input); got != tt.expect {
-				t.Errorf("D1P2() = %v, expected %v", got, tt.expect)
-			}
+			assert.Equal(t, tt.expect, D1P2(tt.input))
 		})
 	}
 }

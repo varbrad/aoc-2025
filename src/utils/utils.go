@@ -17,7 +17,7 @@ func ToInt(s string) int {
 	var n int
 	_, err := fmt.Sscanf(s, "%d", &n)
 	if err != nil {
-		panic(err)
+		panic("could not convert string to int: \"" + s + "\"")
 	}
 	return n
 }
