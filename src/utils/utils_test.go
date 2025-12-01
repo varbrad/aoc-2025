@@ -89,12 +89,16 @@ func TestToInt(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expected, ToInt(tt.input))
+			result, err := ToInt(tt.input)
+			assert.NoError(t, err)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 
 	t.Run("Invalid Input", func(t *testing.T) {
 		t.Parallel()
-		assert.PanicsWithValue(t, "could not convert string to int: \"invalid\"", func() { ToInt("invalid") })
+		result, err := ToInt("invalid")
+		assert.Error(t, err)
+		assert.Equal(t, 0, result)
 	})
 }

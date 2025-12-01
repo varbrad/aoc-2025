@@ -5,8 +5,7 @@ import (
 	"fmt"
 )
 
-func main() {
-
+func D1() {
 	p1 := D1P1(D1Input)
 	p2 := D1P2(D1Input)
 
@@ -22,7 +21,7 @@ func D1P1(input string) int {
 
 	for _, row := range rows {
 		forward := row[0] == 'R'
-		steps := utils.ToInt(row[1:])
+		steps := utils.ToIntMust(row[1:])
 
 		if forward {
 			dial += steps
@@ -48,7 +47,7 @@ func D1P2(input string) int {
 
 	for _, row := range rows {
 		forward := row[0] == 'R'
-		steps := utils.ToInt(row[1:])
+		steps := utils.ToIntMust(row[1:])
 
 		for range steps {
 			if forward {
