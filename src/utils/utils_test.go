@@ -100,4 +100,14 @@ func TestToInt(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("Invalid Input", func(t *testing.T) {
+		t.Parallel()
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("expected panic for invalid input, but did not panic")
+			}
+		}()
+		ToInt("invalid")
+	})
 }
