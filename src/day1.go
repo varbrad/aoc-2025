@@ -6,11 +6,9 @@ import (
 )
 
 func main() {
-	// Read input from file or other source
-	input := utils.ReadInput("input/day1")
 
-	p1 := D1P1(input)
-	p2 := D1P2(input)
+	p1 := D1P1(D1Input)
+	p2 := D1P2(D1Input)
 
 	fmt.Println("Part 1:", p1)
 	fmt.Println("Part 2:", p2)
