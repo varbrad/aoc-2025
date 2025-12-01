@@ -39,6 +39,7 @@ func TestSplitLines(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result := SplitLines(tt.input)
 			if len(result) != len(tt.expected) {
 				t.Fatalf("expected length %d, got %d", len(tt.expected), len(result))
@@ -92,6 +93,7 @@ func TestToInt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			result := ToInt(tt.input)
 			if result != tt.expected {
 				t.Errorf("expected %d, got %d", tt.expected, result)
