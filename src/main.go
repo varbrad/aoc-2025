@@ -17,6 +17,7 @@ func main() {
 
 	days := map[int]func(){
 		1: D1,
+		2: D2,
 	}
 
 	if run, ok := days[*day]; ok {

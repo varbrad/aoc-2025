@@ -7,8 +7,8 @@ import (
 )
 
 func D2() {
-	p1 := D2P1(D1Input)
-	p2 := D2P2(D1Input)
+	p1 := D2P1(D2Input)
+	p2 := D2P2(D2Input)
 
 	fmt.Println("Part 1:", p1)
 	fmt.Println("Part 2:", p2)
@@ -69,7 +69,6 @@ func solve(ranges [][2]int, fixedRepeat bool) int {
 				repeated := strings.Repeat(substr, length/j)
 
 				if repeated == s {
-					fmt.Println("Range:", start, "-", end, "i=", i, "length=", length, "j=", j)
 					set[i] = true
 				}
 			}
