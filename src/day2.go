@@ -7,11 +7,7 @@ import (
 )
 
 func D2() {
-	p1 := D2P1(D2Input)
-	p2 := D2P2(D2Input)
-
-	fmt.Println("Part 1:", p1)
-	fmt.Println("Part 2:", p2)
+	utils.RunDays(D2P1, D2P2, D2Input)
 }
 
 func D2P1(input string) int {
