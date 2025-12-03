@@ -11,14 +11,14 @@ func D2() {
 }
 
 func D2P1(input string) int {
-	return solve(parse(input), true)
+	return d2_solve(d2_parse(input), true)
 }
 
 func D2P2(input string) int {
-	return solve(parse(input), false)
+	return d2_solve(d2_parse(input), false)
 }
 
-func parse(input string) [][2]int {
+func d2_parse(input string) [][2]int {
 	ranges := [][2]int{}
 
 	split := strings.Split(strings.TrimSpace(input), ",")
@@ -35,7 +35,7 @@ func parse(input string) [][2]int {
 	return ranges
 }
 
-func solve(ranges [][2]int, fixedRepeat bool) int {
+func d2_solve(ranges [][2]int, fixedRepeat bool) int {
 	set := make(map[int]bool)
 
 	for _, r := range ranges {
