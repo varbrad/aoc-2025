@@ -10,54 +10,28 @@ func D4() {
 
 func D4P1(input string) int {
 	grid := d4_parse(input)
-
 	count := 0
 
-	for y := range grid.h {
-		for x := range grid.w {
-			char := grid.cells[y][x]
-			if char != '@' {
-				continue
-			}
-
-			adjacent := d4_countAdjacent(grid, x, y)
-			if adjacent < 4 {
-				count++
-			}
-		}
-	}
+	d4_iterate(grid, func(x, y int) {
+		count++
+	})
 
 	return count
 }
 
 func D4P2(input string) int {
 	grid := d4_parse(input)
-
 	count := 0
-	flag := false
 
 	for {
-		for y := range grid.h {
-			for x := range grid.w {
-				char := grid.cells[y][x]
-				if char != '@' {
-					continue
-				}
+		changed := d4_iterate(grid, func(x, y int) {
+			grid.cells[y][x] = '.'
+			count++
+		})
 
-				adjacent := d4_countAdjacent(grid, x, y)
-				if adjacent < 4 {
-					count++
-					grid.cells[y][x] = '.'
-					flag = true
-				}
-			}
-		}
-
-		if !flag {
+		if !changed {
 			break
 		}
-
-		flag = false
 	}
 
 	return count
@@ -111,4 +85,25 @@ func d4_countAdjacent(grid *d4_grid, x, y int) int {
 	}
 
 	return count
+}
+
+func d4_iterate(grid *d4_grid, onChange func(x, y int)) bool {
+	changed := false
+
+	for y := range grid.h {
+		for x := range grid.w {
+			char := grid.cells[y][x]
+			if char != '@' {
+				continue
+			}
+
+			adjacent := d4_countAdjacent(grid, x, y)
+			if adjacent < 4 {
+				onChange(x, y)
+				changed = true
+			}
+		}
+	}
+
+	return changed
 }
