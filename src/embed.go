@@ -12,3 +12,6 @@ var D2Input string
 
 //go:embed input/day3
 var D3Input string
+
+//go:embed input/day4
+var D4Input string
