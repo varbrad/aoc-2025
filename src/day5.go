@@ -36,10 +36,8 @@ type d5_state struct {
 	values []int
 }
 
-func d5_parse(input string) *d5_state {
-	ab := strings.Split(strings.TrimSpace(input), "\n\n")
-
-	a, b := ab[0], ab[1]
+func d5_parse(input string) d5_state {
+	a, b, _ := strings.Cut(strings.TrimSpace(input), "\n\n")
 
 	ranges := [][2]int{}
 	values := []int{}
@@ -56,7 +54,7 @@ func d5_parse(input string) *d5_state {
 		values = append(values, utils.ToIntMust(line))
 	}
 
-	return &d5_state{
+	return d5_state{
 		ranges: d5_merge_ranges(ranges), // pre-merge ranges for efficiency
 		values: values,
 	}
@@ -68,29 +66,31 @@ func d5_merge_ranges(ranges [][2]int) [][2]int {
 		return a[0] - b[0]
 	})
 
-	// Merge overlapping ranges
-	for ix := len(ranges) - 1; ix > 0; ix-- {
-		prev, curr := ranges[ix-1], ranges[ix]
+	merged := make([][2]int, 0, len(ranges))
+	current := ranges[0] // current range
 
-		// if the end of range prev is greater than or equal to the start of range curr, we can combine!
-		if prev[1] >= curr[0] {
-			// merge the ranges by setting the end of the previous range to the max of both ends
-			ranges[ix-1][1] = utils.MaxInt(prev[1], curr[1])
-			// remove the current range as it's now merged
-			ranges = slices.Delete(ranges, ix, ix+1)
+	for i := 1; i < len(ranges); i++ {
+		r := ranges[i] // next range
+
+		// if the next range start is smaller or equal to the current range end
+		if r[0] <= current[1] {
+			// if the next range end is larger than the current range end
+			if r[1] > current[1] {
+				// extend the current range
+				current[1] = r[1]
+			}
+			// skip onto the next range, we've merged it
+			continue
 		}
+
+		// add the currently modified range to the list and move to the next
+		merged = append(merged, current)
+		// set current to next range
+		current = r
 	}
 
-	// Now consider, are there any ranges fully contained within another range?
-	for j := len(ranges) - 1; j > 0; j-- {
-		curr, prev := ranges[j], ranges[j-1]
+	// add the last range to the list
+	merged = append(merged, current)
 
-		// If the current range is fully contained in the previous range
-		if curr[0] >= prev[0] && curr[1] <= prev[1] {
-			// remove the current range
-			ranges = slices.Delete(ranges, j, j+1)
-		}
-	}
-
-	return ranges
+	return merged
 }
