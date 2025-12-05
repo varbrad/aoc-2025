@@ -83,8 +83,7 @@ func d5_merge_ranges(ranges [][2]int) [][2]int {
 
 	// Now consider, are there any ranges fully contained within another range?
 	for j := len(ranges) - 1; j > 0; j-- {
-		curr := ranges[j]
-		prev := ranges[j-1]
+		curr, prev := ranges[j], ranges[j-1]
 
 		// If the current range is fully contained in the previous range
 		if curr[0] >= prev[0] && curr[1] <= prev[1] {
