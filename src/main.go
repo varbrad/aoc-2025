@@ -20,6 +20,7 @@ func main() {
 		2: D2,
 		3: D3,
 		4: D4,
+		5: D5,
 	}
 
 	if run, ok := days[*day]; ok {
