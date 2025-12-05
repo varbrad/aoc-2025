@@ -69,3 +69,13 @@ func MaxInt(a, b int) int {
 	}
 	return b
 }
+
+func Reduce[ArrType any, RetValue any](slice []ArrType, fn func(RetValue, ArrType) RetValue, initial RetValue) RetValue {
+	result := initial
+
+	for _, v := range slice {
+		result = fn(result, v)
+	}
+
+	return result
+}

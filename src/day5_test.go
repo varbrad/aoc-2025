@@ -20,7 +20,7 @@ func TestD5P1(t *testing.T) {
 		{
 			name:   "Input",
 			input:  D5Input,
-			expect: 0,
+			expect: 623,
 		},
 	}
 
