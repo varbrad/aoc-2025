@@ -1,4 +1,4 @@
-name: Go Format & Vet
+name: Benchmarks
 
 on:
   push:
