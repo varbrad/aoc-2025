@@ -5,8 +5,10 @@ import (
 	"strings"
 )
 
-func D6() {
-	utils.RunDays(D6P1, D6P2, D6Input)
+var D6 = Day{
+	P1:    D6P1,
+	P2:    D6P2,
+	Input: D6Input,
 }
 
 func D6P1(input string) int {

@@ -4,8 +4,10 @@ import (
 	"aoc-2025/src/utils"
 )
 
-func D1() {
-	utils.RunDays(D1P1, D1P2, D1Input)
+var D1 = Day{
+	P1:    D1P1,
+	P2:    D1P2,
+	Input: D1Input,
 }
 
 func D1P1(input string) int {
