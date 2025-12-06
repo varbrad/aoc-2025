@@ -14,6 +14,11 @@ func SplitLines(input string) []string {
 	return slice
 }
 
+func SplitLinesNoTrim(input string) []string {
+	slice := strings.Split(input, "\n")
+	return slice
+}
+
 func ToInt(s string) (int, error) {
 	var n int
 	_, err := fmt.Sscanf(s, "%d", &n)
@@ -78,4 +83,20 @@ func Reduce[ArrType any, RetValue any](slice []ArrType, fn func(RetValue, ArrTyp
 	}
 
 	return result
+}
+
+func SplitWhitespace(s string) []string {
+	return strings.Fields(s)
+}
+
+func SumInts(ints []int) int {
+	return Reduce(ints, func(acc int, v int) int {
+		return acc + v
+	}, 0)
+}
+
+func ProdInts(ints []int) int {
+	return Reduce(ints, func(acc int, v int) int {
+		return acc * v
+	}, 1)
 }
