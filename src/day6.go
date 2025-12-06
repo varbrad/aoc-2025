@@ -46,6 +46,7 @@ func D6P2(input string) int {
 		colChars := []rune{}
 
 		for j, row := range rows {
+			// Skip the last row (operations)
 			if j == len(rows)-1 {
 				continue
 			}
