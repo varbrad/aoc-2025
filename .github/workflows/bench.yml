@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  check:
+  bench:
     runs-on: ubuntu-latest
 
     steps:
