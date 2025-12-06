@@ -85,10 +85,6 @@ func Reduce[ArrType any, RetValue any](slice []ArrType, fn func(RetValue, ArrTyp
 	return result
 }
 
-func SplitWhitespace(s string) []string {
-	return strings.Fields(s)
-}
-
 func SumInts(ints []int) int {
 	return Reduce(ints, func(acc int, v int) int {
 		return acc + v

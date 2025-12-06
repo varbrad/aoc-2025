@@ -201,3 +201,77 @@ func TestToIntMust(t *testing.T) {
 		})
 	})
 }
+
+func TestProdInts(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			name:     "Basic Test",
+			input:    []int{1, 2, 3, 4},
+			expected: 24,
+		},
+		{
+			name:     "With Zero",
+			input:    []int{5, 0, 2},
+			expected: 0,
+		},
+		{
+			name:     "Single Element",
+			input:    []int{7},
+			expected: 7,
+		},
+		{
+			name:     "Empty Slice",
+			input:    []int{},
+			expected: 1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := ProdInts(tt.input)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
+
+func TestSumInts(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    []int
+		expected int
+	}{
+		{
+			name:     "Basic Test",
+			input:    []int{1, 2, 3, 4},
+			expected: 10,
+		},
+		{
+			name:     "With Negative Numbers",
+			input:    []int{5, -2, 3},
+			expected: 6,
+		},
+		{
+			name:     "Single Element",
+			input:    []int{7},
+			expected: 7,
+		},
+		{
+			name:     "Empty Slice",
+			input:    []int{},
+			expected: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			result := SumInts(tt.input)
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
