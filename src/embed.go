@@ -21,3 +21,6 @@ var D5Input string
 
 //go:embed input/day6
 var D6Input string
+
+//go:embed input/day7
+var D7Input string
