@@ -26,74 +26,87 @@ func D7P2(input string) int {
 
 	// Store the valid splitters after the first simulation
 	validSplitters := state.splitters
-	cache := make(map[string]int)
-	paths := d7_recurse(&validSplitters, validSplitters[0], cache)
 
-	return paths
+	tree := d7_build_tree(validSplitters)
+
+	return d7_recurse(tree, make(map[string]int))
 }
 
-func d7_recurse(splitters *[]d7_pos, pos d7_pos, cache map[string]int) int {
+func d7_recurse(node *d7_node, cache map[string]int) int {
 	// Check the cache first
-	key := fmt.Sprintf("%d,%d|", pos.x, pos.y)
+	key := fmt.Sprintf("%d,%d|", node.x, node.y)
 	if val, exists := cache[key]; exists {
 		return val
 	}
 
-	// We know this splitter will split the beam into two paths, left and right
-	// Find what splitters are to the left and right
-	leftSplitter := d7_pos{-1, -1}
-	rightSplitter := d7_pos{-1, -1}
-	for _, splitter := range *splitters {
-		// If we have both splitters, break
-		hasLeft := leftSplitter.x != -1
-		hasRight := rightSplitter.x != -1
-		if hasLeft && hasRight {
-			break
-		}
-
-		// Firstly, this splitter must be below the current position
-		if splitter.y <= pos.y {
-			continue
-		}
-
-		// Check for left splitter
-		if !hasLeft && splitter.x == pos.x-1 && splitter.y > pos.y {
-			leftSplitter = splitter
-			continue
-		}
-
-		// Check for right splitter
-		if !hasRight && splitter.x == pos.x+1 && splitter.y > pos.y {
-			rightSplitter = splitter
-			continue
-		}
-	}
-
-	// If we found no splitters, this is an end path where both beams just go off into infinity
-	if leftSplitter.x == -1 && rightSplitter.x == -1 {
-		return 2 // Both beams go to infinity
+	// Base case: if leaf node
+	if node.left == nil && node.right == nil {
+		return 2
 	}
 
 	paths := 0
 
-	// Recurse left
-	if leftSplitter.x != -1 {
-		paths += d7_recurse(splitters, leftSplitter, cache)
+	if node.left != nil {
+		paths += d7_recurse(node.left, cache)
 	} else {
-		paths += 1 // Left beam goes to infinity
+		paths += 1
 	}
 
-	// Recurse right
-	if rightSplitter.x != -1 {
-		paths += d7_recurse(splitters, rightSplitter, cache)
+	if node.right != nil {
+		paths += d7_recurse(node.right, cache)
 	} else {
-		paths += 1 // Right beam goes to infinity
+		paths += 1
 	}
 
 	// Store in cache
 	cache[key] = paths
 
 	return paths
+}
+
+type d7_node struct {
+	x     int
+	y     int
+	left  *d7_node
+	right *d7_node
+}
+
+func d7_build_tree(splitters []d7_pos) *d7_node {
+	nodes := make([]*d7_node, len(splitters))
+	for i := range splitters {
+		nodes[i] = &d7_node{
+			x: splitters[i].x,
+			y: splitters[i].y,
+		}
+	}
+
+	for _, n1 := range nodes {
+		// Find left child
+		leftChildIndex := -1
+		for j, n2 := range nodes {
+			if n2.x == n1.x-1 && n2.y > n1.y {
+				leftChildIndex = j
+				break
+			}
+		}
+		if leftChildIndex != -1 {
+			n1.left = nodes[leftChildIndex]
+		}
+
+		// Find right child
+		rightChildIndex := -1
+		for j, n2 := range nodes {
+			if n2.x == n1.x+1 && n2.y > n1.y {
+				rightChildIndex = j
+				break
+			}
+		}
+		if rightChildIndex != -1 {
+			n1.right = nodes[rightChildIndex]
+		}
+	}
+
+	return nodes[0]
 }
 
 type d7_pos struct {
