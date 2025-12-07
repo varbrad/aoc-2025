@@ -38,7 +38,7 @@ func TestD7P1(t *testing.T) {
 		{
 			name:   "Input",
 			input:  D7Input,
-			expect: 0,
+			expect: 1642,
 		},
 	}
 
