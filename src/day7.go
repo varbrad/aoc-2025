@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc-2025/src/utils"
+	"sort"
 )
 
 var D7 = Day{
@@ -46,40 +47,46 @@ type d7_node struct {
 }
 
 func d7_build_tree(splitters []d7_pos) *d7_node {
-	nodes := make([]*d7_node, len(splitters))
-	for i := range splitters {
-		nodes[i] = &d7_node{
-			pos: &d7_pos{splitters[i].x, splitters[i].y},
+	xNodes := make(map[int][]*d7_node)
+
+	// Group nodes by their x coordinate
+	for _, p := range splitters {
+		n := &d7_node{pos: &d7_pos{x: p.x, y: p.y}}
+		xNodes[p.x] = append(xNodes[p.x], n)
+	}
+
+	// Sort each x group by y coordinate
+	for _, list := range xNodes {
+		sort.Slice(list, func(i, j int) bool {
+			return list[i].pos.y < list[j].pos.y
+		})
+	}
+
+	for x, list := range xNodes {
+		for _, n := range list {
+			// left child
+			if leftList, ok := xNodes[x-1]; ok {
+				i := sort.Search(len(leftList), func(i int) bool {
+					return leftList[i].pos.y > n.pos.y
+				})
+				if i < len(leftList) {
+					n.left = leftList[i]
+				}
+			}
+
+			// right child
+			if rightList, ok := xNodes[x+1]; ok {
+				i := sort.Search(len(rightList), func(i int) bool {
+					return rightList[i].pos.y > n.pos.y
+				})
+				if i < len(rightList) {
+					n.right = rightList[i]
+				}
+			}
 		}
 	}
 
-	for _, n1 := range nodes {
-		// Find left child
-		leftChildIndex := -1
-		for j, n2 := range nodes {
-			if n2.pos.x == n1.pos.x-1 && n2.pos.y > n1.pos.y {
-				leftChildIndex = j
-				break
-			}
-		}
-		if leftChildIndex != -1 {
-			n1.left = nodes[leftChildIndex]
-		}
-
-		// Find right child
-		rightChildIndex := -1
-		for j, n2 := range nodes {
-			if n2.pos.x == n1.pos.x+1 && n2.pos.y > n1.pos.y {
-				rightChildIndex = j
-				break
-			}
-		}
-		if rightChildIndex != -1 {
-			n1.right = nodes[rightChildIndex]
-		}
-	}
-
-	return nodes[0]
+	return xNodes[splitters[0].x][0]
 }
 
 func d7_tree_unique_nodes(node *d7_node, seen map[d7_pos]bool) int {
