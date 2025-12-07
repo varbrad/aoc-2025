@@ -153,7 +153,6 @@ func d7_simulate(state *d7_state) d7_simulation {
 	for i := len(state.splitters) - 1; i >= 0; i-- {
 		key := fmt.Sprintf("%d,%d", state.splitters[i].x, state.splitters[i].y)
 		if !sim.visitedSplitters[key] {
-			fmt.Printf("Splitter at (%d, %d) was not visited\n", state.splitters[i].x, state.splitters[i].y)
 			state.splitters = slices.Delete(state.splitters, i, i+1)
 		}
 	}
