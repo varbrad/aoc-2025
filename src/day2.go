@@ -22,9 +22,7 @@ func D2P2(input string) int {
 
 func d2_solve(ranges [][2]int, fixedRepeat bool) int {
 	set := make(map[int]bool)
-
-	// Reusable buffer for int→string conversion
-	buf := make([]byte, 0, 16)
+	buf := make([]byte, 0, 16) // buffer for number conversion
 
 	for _, r := range ranges {
 		start := r[0]
