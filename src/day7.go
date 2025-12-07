@@ -2,7 +2,6 @@ package main
 
 import (
 	"aoc-2025/src/utils"
-	"fmt"
 )
 
 var D7 = Day{
@@ -12,48 +11,36 @@ var D7 = Day{
 }
 
 func D7P1(input string) int {
-	return d7_tree_unique_nodes(d7_parse(input), make(map[string]bool))
+	return d7_tree_unique_nodes(d7_parse(input), make(map[d7_pos]bool))
 }
 
 func D7P2(input string) int {
-	return d7_recurse(d7_parse(input), make(map[string]int))
+	return d7_recurse(d7_parse(input), make(map[d7_pos]int))
 }
 
-func d7_recurse(node *d7_node, cache map[string]int) int {
+func d7_recurse(node *d7_node, cache map[d7_pos]int) int {
 	// Check the cache first
-	key := fmt.Sprintf("%d,%d|", node.x, node.y)
-	if val, exists := cache[key]; exists {
+	if val, exists := cache[*node.pos]; exists {
 		return val
 	}
 
-	// Base case: if leaf node
-	if node.left == nil && node.right == nil {
-		return 2
-	}
-
-	paths := 0
-
+	left := 1
 	if node.left != nil {
-		paths += d7_recurse(node.left, cache)
-	} else {
-		paths += 1
+		left = d7_recurse(node.left, cache)
 	}
 
+	right := 1
 	if node.right != nil {
-		paths += d7_recurse(node.right, cache)
-	} else {
-		paths += 1
+		right = d7_recurse(node.right, cache)
 	}
 
 	// Store in cache
-	cache[key] = paths
-
-	return paths
+	cache[*node.pos] = left + right
+	return cache[*node.pos]
 }
 
 type d7_node struct {
-	x     int
-	y     int
+	pos   *d7_pos
 	left  *d7_node
 	right *d7_node
 }
@@ -62,8 +49,7 @@ func d7_build_tree(splitters []d7_pos) *d7_node {
 	nodes := make([]*d7_node, len(splitters))
 	for i := range splitters {
 		nodes[i] = &d7_node{
-			x: splitters[i].x,
-			y: splitters[i].y,
+			pos: &d7_pos{splitters[i].x, splitters[i].y},
 		}
 	}
 
@@ -71,7 +57,7 @@ func d7_build_tree(splitters []d7_pos) *d7_node {
 		// Find left child
 		leftChildIndex := -1
 		for j, n2 := range nodes {
-			if n2.x == n1.x-1 && n2.y > n1.y {
+			if n2.pos.x == n1.pos.x-1 && n2.pos.y > n1.pos.y {
 				leftChildIndex = j
 				break
 			}
@@ -83,7 +69,7 @@ func d7_build_tree(splitters []d7_pos) *d7_node {
 		// Find right child
 		rightChildIndex := -1
 		for j, n2 := range nodes {
-			if n2.x == n1.x+1 && n2.y > n1.y {
+			if n2.pos.x == n1.pos.x+1 && n2.pos.y > n1.pos.y {
 				rightChildIndex = j
 				break
 			}
@@ -96,17 +82,16 @@ func d7_build_tree(splitters []d7_pos) *d7_node {
 	return nodes[0]
 }
 
-func d7_tree_unique_nodes(node *d7_node, seen map[string]bool) int {
+func d7_tree_unique_nodes(node *d7_node, seen map[d7_pos]bool) int {
 	if node == nil {
 		return 0
 	}
 
-	key := fmt.Sprintf("%d,%d", node.x, node.y)
-	if seen[key] {
+	if seen[*node.pos] {
 		return 0
 	}
 
-	seen[key] = true
+	seen[*node.pos] = true
 
 	count := 1
 
