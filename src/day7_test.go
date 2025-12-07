@@ -61,11 +61,11 @@ func TestD7P2(t *testing.T) {
 			input:  testInput,
 			expect: 40,
 		},
-		// {
-		// 	name:   "Input",
-		// 	input:  D7Input,
-		// 	expect: 0,
-		// },
+		{
+			name:   "Input",
+			input:  D7Input,
+			expect: 47274292756692,
+		},
 	}
 
 	for _, tt := range tests {
