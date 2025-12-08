@@ -104,7 +104,74 @@ outer:
 }
 
 func D8P2(input string) int {
-	return -1
+	state := d8_parse(input)
+
+	connections := []*d8_dist{}
+
+	for i := 0; i < len(state.pos)-1; i++ {
+		a := state.pos[i]
+		for j := i + 1; j < len(state.pos); j++ {
+			b := state.pos[j]
+
+			dist := a.distance(b)
+
+			connections = append(connections, &d8_dist{a, b, dist})
+		}
+	}
+
+	slices.SortFunc(connections, func(a, b *d8_dist) int {
+		return a.dist - b.dist
+	})
+
+	circuits := make([][]*d8_3d, len(state.pos))
+	for i, p := range state.pos {
+		circuits[i] = []*d8_3d{p}
+	}
+
+	print_circuits(circuits)
+
+	i := 0
+	for {
+		conn := connections[i]
+
+		fmt.Println(conn.a, conn.b)
+
+		// Find the circuits for a and b
+		var caix, cbix int
+		for cix, circuit := range circuits {
+			for _, point := range circuit {
+				if point == conn.a {
+					caix = cix
+				}
+				if point == conn.b {
+					cbix = cix
+				}
+			}
+		}
+
+		if caix != cbix {
+			// Merge circuits
+			circuits[caix] = append(circuits[caix], circuits[cbix]...)
+			circuits = append(circuits[:cbix], circuits[cbix+1:]...)
+		}
+
+		if len(circuits) == 1 {
+			fmt.Println("All connected at", i)
+			return conn.a.x * conn.b.x
+		}
+
+		i++
+	}
+}
+
+func print_circuits(circuits [][]*d8_3d) {
+	for i, circuit := range circuits {
+		fmt.Printf("Circuit %d: ", i)
+		for _, point := range circuit {
+			fmt.Printf("(%d,%d,%d) ", point.x, point.y, point.z)
+		}
+		fmt.Println()
+	}
 }
 
 type d8_3d struct {

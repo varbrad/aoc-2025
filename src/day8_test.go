@@ -64,12 +64,12 @@ func TestD8P2(t *testing.T) {
 		{
 			name:   "Example Test 1",
 			input:  d8_test_input,
-			expect: 0,
+			expect: 25272,
 		},
 		{
 			name:   "Input",
 			input:  D8.Input,
-			expect: 0,
+			expect: 169521198,
 		},
 	}
 
