@@ -23,6 +23,7 @@ var Days = map[int]Day{
 	5: D5,
 	6: D6,
 	7: D7,
+	8: D8,
 }
 
 func benchmark() {
