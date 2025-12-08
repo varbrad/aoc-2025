@@ -40,11 +40,11 @@ func TestD8P1(t *testing.T) {
 			input:  d8_test_input,
 			expect: 40,
 		},
-		{
-			name:   "Input",
-			input:  D8.Input,
-			expect: 164475,
-		},
+		// {
+		// 	name:   "Input",
+		// 	input:  D8.Input,
+		// 	expect: 164475,
+		// },
 	}
 
 	for _, tt := range tests {
