@@ -53,11 +53,11 @@ func TestD9P2(t *testing.T) {
 			input:  d9_test_input,
 			expect: 24,
 		},
-		// {
-		// 	name:   "Input",
-		// 	input:  D9.Input,
-		// 	expect: 0,
-		// },
+		{
+			name:   "Input",
+			input:  D9.Input,
+			expect: 0,
+		},
 	}
 
 	for _, tt := range tests {
