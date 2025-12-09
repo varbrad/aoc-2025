@@ -56,7 +56,7 @@ func TestD9P2(t *testing.T) {
 		{
 			name:   "Input",
 			input:  D9.Input,
-			expect: 0,
+			expect: 1501292304,
 		},
 	}
 
