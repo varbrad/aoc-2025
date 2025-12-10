@@ -30,3 +30,6 @@ var D8Input string
 
 //go:embed input/day9
 var D9Input string
+
+//go:embed input/day10
+var D10Input string
