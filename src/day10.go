@@ -13,18 +13,14 @@ var D10 = Day{
 }
 
 func D10P1(input string) int {
-	states := d10_parse(input)
-
-	sum := 0
-	for _, state := range states {
-		steps := d10_solve_machine(state)
-		sum += steps
-	}
-
-	return sum
+	return utils.Reduce(d10_parse(input), func(curr int, state d10_state) int {
+		return curr + d10_solve_machine(state)
+	}, 0)
 }
 
 func d10_solve_machine(state d10_state) int {
+	// get all permutations of button presses
+	// the best answer will ALWAYS only have each button being pressed at most once
 	permutations := d10_permute(len(state.buttons))
 
 	for _, perm := range permutations {
@@ -47,6 +43,7 @@ func d10_solve_machine(state d10_state) int {
 			}
 		}
 
+		// if all lights are off, we've done it - just return no. of steps
 		if allOff {
 			steps := 0
 			for _, press := range perm {
@@ -58,9 +55,11 @@ func d10_solve_machine(state d10_state) int {
 		}
 	}
 
+	// should never reach here
 	return -1
 }
 
+// Cache of permutations by number of buttons (int) to [][]bool
 var _cache map[int][][]bool = make(map[int][][]bool)
 
 func d10_permute(n int) [][]bool {
@@ -71,15 +70,16 @@ func d10_permute(n int) [][]bool {
 	total := 1 << n
 	out := make([][]bool, total)
 
-	for i := 0; i < total; i++ {
+	for i := range total {
 		row := make([]bool, n)
-		for b := 0; b < n; b++ {
+		for b := range n {
 			shift := n - 1 - b
 			row[b] = ((i >> shift) & 1) == 1
 		}
 		out[i] = row
 	}
 
+	// Sort permutaitons by number of true values (fewest button presses)
 	slices.SortFunc(out, func(a, b []bool) int {
 		trueCountA := 0
 		for _, v := range a {
@@ -96,9 +96,9 @@ func d10_permute(n int) [][]bool {
 		return trueCountA - trueCountB
 	})
 
-	_cache[n] = out
-
-	return out[1:]
+	// Cache and return
+	_cache[n] = out[1:]
+	return _cache[n]
 }
 
 func D10P2(input string) int {
