@@ -36,3 +36,6 @@ var D10Input string
 
 //go:embed input/day11
 var D11Input string
+
+//go:embed input/day12
+var D12Input string
