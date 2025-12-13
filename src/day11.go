@@ -2,7 +2,6 @@ package main
 
 import (
 	"aoc-2025/src/utils"
-	"fmt"
 	"strings"
 )
 
@@ -13,25 +12,84 @@ var D11 = Day{
 }
 
 func D11P1(input string) int {
-	rows := utils.SplitLines(input)
-
-	nodes := make(map[string][]string)
-
-	for _, row := range rows {
-		spl := strings.Split(row, ":")
-
-		node := spl[0]
-		edges := strings.Fields(spl[1])
-
-		nodes[node] = edges
-	}
-
-	return d11_find_paths(nodes, "you", "out")
+	nodes := d11_parse(input)
+	return d11_calculate_routes(nodes, "you", "out")
 }
 
 func D11P2(input string) int {
-	rows := utils.SplitLines(input)
+	nodes := d11_parse(input)
 
+	// route A: svr -> fft -> dac -> out
+	svr_to_fft := d11_calculate_routes(nodes, "svr", "fft", "dac")
+	fft_to_dac := d11_calculate_routes(nodes, "fft", "dac")
+	dac_to_out := d11_calculate_routes(nodes, "dac", "out")
+
+	// route B: svr -> dac -> fft -> out
+	svr_to_dac := d11_calculate_routes(nodes, "svr", "dac", "fft")
+	dac_to_fft := d11_calculate_routes(nodes, "dac", "fft")
+	fft_to_out := d11_calculate_routes(nodes, "fft", "out")
+
+	waysA := svr_to_fft * fft_to_dac * dac_to_out
+	waysB := svr_to_dac * dac_to_fft * fft_to_out
+
+	return waysA + waysB
+}
+
+func d11_calculate_routes(nodes map[string][]string, from string, target string, ignoring ...string) int {
+	waysMap := make(map[string]int)
+	waysMap[target] = 1
+
+	// mark ignoring nodes as 0 ways (dead end)
+	for _, ign := range ignoring {
+		waysMap[ign] = 0
+	}
+
+	stack := []string{from}
+	for len(stack) > 0 {
+		curr := stack[len(stack)-1]
+
+		// already in the map - if so pop the stack and continue
+		if _, ok := waysMap[curr]; ok {
+			stack = stack[:len(stack)-1]
+			continue
+		}
+
+		children, ok := nodes[curr]
+		if !ok {
+			// leaf node, no ways to target from here
+			waysMap[curr] = 0
+			stack = stack[:len(stack)-1]
+			continue
+		}
+
+		allChildrenInMap := true
+		totalWays := 0
+		// loop thru children, and see if they are all in the map and count ways
+		for _, child := range children {
+			if v, ok := waysMap[child]; !ok {
+				allChildrenInMap = false
+				stack = append(stack, child)
+			} else {
+				totalWays += v
+			}
+		}
+
+		// if not all children are in the map, continue (we've pushed them to the stack already)
+		if !allChildrenInMap {
+			continue
+		}
+
+		// otherwise, all children are in the map, so set ways and pop
+		waysMap[curr] = totalWays
+		stack = stack[:len(stack)-1]
+	}
+
+	// finally return the ways from 'from' to 'target'
+	return waysMap[from]
+}
+
+func d11_parse(input string) map[string][]string {
+	rows := utils.SplitLines(input)
 	nodes := make(map[string][]string)
 
 	for _, row := range rows {
@@ -43,151 +101,5 @@ func D11P2(input string) int {
 		nodes[node] = edges
 	}
 
-	nodesThatCanReachFFT := d11_nodes_that_can_reach(nodes, "fft")
-	nodesThatCanReachDAC := d11_nodes_that_can_reach(nodes, "dac")
-
-	fmt.Println("Nodes that can reach FFT:", nodesThatCanReachFFT)
-	fmt.Println("Nodes that can reach DAC:", nodesThatCanReachDAC)
-
-	fft_to_dac := d11_find_paths(nodes, "fft", "dac")
-	fmt.Println("Paths from FFT to DAC:", fft_to_dac)
-	// return d11_find_paths_p2(nodes, nodesThatCanReachFFT, nodesThatCanReachDAC)
-
-	return -1
-}
-
-type d11_p2 struct {
-	path       []string
-	visitedFFT bool
-	visitedDAC bool
-}
-
-func d11_find_paths_p2(nodes map[string][]string, fft map[string]bool, dac map[string]bool) int {
-	paths := []d11_p2{{path: []string{"svr"}, visitedFFT: false, visitedDAC: false}}
-	totalPaths := 0
-
-	for {
-		if len(paths)%1000 == 0 {
-			fmt.Println("Paths to explore:", len(paths), "Total paths found:", totalPaths)
-		}
-		if len(paths) == 0 {
-			break
-		}
-		current := paths[0]
-		currentNode := current.path[len(current.path)-1]
-		visitedFFT := current.visitedFFT
-		visitedDAC := current.visitedDAC
-		paths = paths[1:]
-
-		// Find all next steps
-		nextNodes := nodes[currentNode]
-
-		for _, nextNode := range nextNodes {
-			// If we've visted both fft and dac and are at out, count a path
-			if nextNode == "out" && visitedFFT && visitedDAC {
-				fmt.Println("Found path:", append(current.path, nextNode), visitedFFT, visitedDAC)
-				totalPaths++
-				continue
-			}
-
-			// If we've not yet reached fft, check if we can reach it from here
-			if !visitedFFT && !fft[nextNode] {
-				continue
-			}
-
-			// If we've not yet reached dac, check if we can reach it from here
-			if !visitedDAC && !dac[nextNode] {
-				continue
-			}
-
-			newPath := make([]string, len(current.path))
-			copy(newPath, current.path)
-			newPath = append(newPath, nextNode)
-			paths = append(paths, d11_p2{
-				path:       newPath,
-				visitedFFT: visitedFFT || nextNode == "fft",
-				visitedDAC: visitedDAC || nextNode == "dac",
-			})
-		}
-	}
-
-	return totalPaths
-}
-
-func d11_find_paths(unoptimised_nodes map[string][]string, start string, end string) int {
-	optimised_nodes := d11_nodes_that_can_reach(unoptimised_nodes, end)
-	nodes := make(map[string][]string)
-	for node := range optimised_nodes {
-		nodes[node] = unoptimised_nodes[node]
-	}
-
-	paths := [][]string{{start}}
-	totalPaths := 0
-
-	for {
-		if len(paths) == 0 {
-			break
-		}
-
-		currentPath := paths[0]
-		currentNode := currentPath[len(currentPath)-1]
-		paths = paths[1:]
-
-		// Find all next steps
-		nextNodes := nodes[currentNode]
-
-		for _, nextNode := range nextNodes {
-			if nextNode == end {
-				totalPaths++
-				continue
-			}
-
-			newPath := make([]string, len(currentPath))
-			copy(newPath, currentPath)
-			newPath = append(newPath, nextNode)
-			paths = append(paths, newPath)
-		}
-	}
-
-	return totalPaths
-}
-
-func d11_nodes_that_can_reach(nodes map[string][]string, target string) map[string]bool {
-	result := map[string]bool{}
-
-	for node := range nodes {
-		if d11_can_get_to(nodes, node, target) {
-			result[node] = true
-		}
-	}
-
-	return result
-}
-
-func d11_can_get_to(nodes map[string][]string, start string, end string) bool {
-	visited := make(map[string]bool)
-	toVisit := []string{start}
-
-	for len(toVisit) > 0 {
-		current := toVisit[0]
-		toVisit = toVisit[1:]
-
-		if current == end {
-			return true
-		}
-
-		if visited[current] {
-			continue
-		}
-
-		visited[current] = true
-
-		for _, neighbor := range nodes[current] {
-			if !visited[neighbor] {
-				toVisit = append(toVisit, neighbor)
-			}
-		}
-	}
-
-	return false
+	return nodes
 }
