@@ -43,12 +43,26 @@ func benchmark() {
 	for _, day := range days {
 		dayStruct := Days[day]
 
+		solve1 := dayStruct.P1(dayStruct.Input) != -1
+		solve2 := dayStruct.P2(dayStruct.Input) != -1
+
 		p1 := utils.BenchmarkFn(dayStruct.P1, dayStruct.Input)
 		p2 := utils.BenchmarkFn(dayStruct.P2, dayStruct.Input)
 
 		fmt.Println("Day", day)
+		// Colour red if not solved
+		if !solve1 {
+			fmt.Print("\033[31m")
+		}
 		fmt.Printf("  Part 1: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p1.AverageNs), p1.IterationsPerSecond)
+		// Reset colour
+		fmt.Print("\033[0m")
+		if !solve2 {
+			fmt.Print("\033[31m")
+		}
 		fmt.Printf("  Part 2: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p2.AverageNs), p2.IterationsPerSecond)
+		// Reset colour
+		fmt.Print("\033[0m")
 
 		averageRuntime += p1.AverageNs + p2.AverageNs
 	}
