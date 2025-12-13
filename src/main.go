@@ -51,20 +51,18 @@ func benchmark() {
 
 		fmt.Println("Day", day)
 		// Colour red if not solved
-		if !solve1 {
-			fmt.Print("\033[31m")
+		if solve1 {
+			averageRuntime += p1.AverageNs
+			fmt.Printf("  Part 1: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p1.AverageNs), p1.IterationsPerSecond)
+		} else {
+			fmt.Println("\033[31m  Part 1: Not solved\033[0m")
 		}
-		fmt.Printf("  Part 1: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p1.AverageNs), p1.IterationsPerSecond)
-		// Reset colour
-		fmt.Print("\033[0m")
-		if !solve2 {
-			fmt.Print("\033[31m")
+		if solve2 {
+			averageRuntime += p2.AverageNs
+			fmt.Printf("  Part 2: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p2.AverageNs), p2.IterationsPerSecond)
+		} else {
+			fmt.Println("\033[31m  Part 2: Not solved\033[0m")
 		}
-		fmt.Printf("  Part 2: %v (avg), %.2f (iter/s), \n", utils.ToFriendlyTime(p2.AverageNs), p2.IterationsPerSecond)
-		// Reset colour
-		fmt.Print("\033[0m")
-
-		averageRuntime += p1.AverageNs + p2.AverageNs
 	}
 
 	fmt.Println("")
